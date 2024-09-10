@@ -93,6 +93,18 @@ const App = () => {
         setSelectedUserId(user.id);
     };
 
+    // Function to delete a user by ID
+    const handleDeleteUser = async (userId) => {
+        try {
+            await database().ref(`/users/${userId}`).remove();
+            Alert.alert('Success', 'User deleted successfully!');
+            fetchUsers();  // Refresh the user list after deleting a user
+        } catch (error) {
+            console.error("Error deleting user: ", error);
+            Alert.alert('Error', 'Failed to delete user.');
+        }
+    };
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -132,7 +144,11 @@ const App = () => {
                         <View style={styles.userItem}>
                             <Text style={styles.userText}>{item.username}</Text>
                             <Text>{item.email}</Text>
-                            <Button title="Edit" onPress={() => handleEdit(item)} />
+                            <View style={{ paddingTop: 5 }}><Button
+                                title="Edit" onPress={() => handleEdit(item)} /></View>
+                            <View style={{ paddingTop: 5 }}>
+                                <Button title="Delete" onPress={() => handleDeleteUser(item.id)} color="red" />
+                            </View>
                         </View>
                     )}
                 />
@@ -163,6 +179,9 @@ const styles = StyleSheet.create({
     userText: {
         fontWeight: 'bold',
     },
+    button: {
+        paddingTop: 5
+    }
 });
 
 
