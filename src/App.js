@@ -4,6 +4,7 @@ import database from '@react-native-firebase/database';
 
 const App = () => {
     const [name, setName] = useState('');
+    const [mobile, setMobile] = useState('');
     const [email, setEmail] = useState('');
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -59,6 +60,7 @@ const App = () => {
                     await database().ref(`/users/${selectedUserId}`).update({
                         username: name,
                         email: email,
+                        mobile: mobile,
                         updatedAt: new Date().toISOString(),
                     });
                     Alert.alert('Success', 'User updated successfully!');
@@ -68,6 +70,7 @@ const App = () => {
                     await newUserRef.set({
                         username: name,
                         email: email,
+                        mobile: mobile,
                         createdAt: new Date().toISOString(),
                     });
                     Alert.alert('Success', 'User added successfully!');
@@ -76,6 +79,7 @@ const App = () => {
                 // Reset form and selectedUserId
                 setName('');
                 setEmail('');
+                setMobile('');
                 setSelectedUserId(null);
                 fetchUsers();  // Refresh the user list after adding/updating a user
             } catch (error) {
@@ -90,6 +94,7 @@ const App = () => {
     const handleEdit = (user) => {
         setName(user.username);
         setEmail(user.email);
+        setMobile(user.mobile);
         setSelectedUserId(user.id);
     };
 
@@ -120,6 +125,12 @@ const App = () => {
                 value={email}
                 onChangeText={setEmail}
             />
+            <TextInput
+                style={styles.input}
+                placeholder="Mobile"
+                value={mobile}
+                onChangeText={setMobile}
+            />
             {/* <Button title="Submit" onPress={handleSubmit} /> */}
             <Button title={selectedUserId ? "Update" : "Submit"} onPress={handleSubmit} />
 
@@ -144,6 +155,7 @@ const App = () => {
                         <View style={styles.userItem}>
                             <Text style={styles.userText}>{item.username}</Text>
                             <Text>{item.email}</Text>
+                            <Text>{item.mobile}</Text>
                             <View style={{ paddingTop: 5 }}><Button
                                 title="Edit" onPress={() => handleEdit(item)} /></View>
                             <View style={{ paddingTop: 5 }}>
