@@ -10,15 +10,22 @@ import SignIn from './SignIn';
 const Register = ({ onRegisterSuccess, onAlreadyRegistered }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState(''); // New state for confirm password
 
     const handleRegister = async () => {
+        // Validate if passwords match
+        if (password !== confirmPassword) {
+            Alert.alert('Error', 'Passwords do not match. Please try again.');
+            return;
+        }
+
         try {
             await auth().createUserWithEmailAndPassword(email, password);
             Alert.alert('Success', 'User registered successfully!');
             onRegisterSuccess(); // Notify the App component to switch back after registration
         } catch (error) {
+            Alert.alert('Error', 'Registration failed.' `${error}`);
             console.error("Error registering user: ", error);
-            Alert.alert('Error', 'Registration failed. Please try again.');
         }
     };
 
@@ -30,6 +37,7 @@ const Register = ({ onRegisterSuccess, onAlreadyRegistered }) => {
                 value={email}
                 onChangeText={setEmail}
             />
+
             <TextInput
                 style={styles.input}
                 placeholder="Password"
@@ -37,6 +45,15 @@ const Register = ({ onRegisterSuccess, onAlreadyRegistered }) => {
                 value={password}
                 onChangeText={setPassword}
             />
+
+            <TextInput
+                style={styles.input}
+                placeholder="Confirm Password"
+                secureTextEntry
+                value={confirmPassword}  // Second input for confirm password
+                onChangeText={setConfirmPassword}
+            />
+
             <Button style={styles.btn} title="Register" onPress={handleRegister} />
             <View style={styles.btn}>
                 <Button title="Already Registered" onPress={onAlreadyRegistered} />

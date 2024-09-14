@@ -4,6 +4,7 @@ import { SafeAreaView, TextInput, Button, FlatList, Text, View, StyleSheet, Acti
 import database from '@react-native-firebase/database';
 import Register from './pages/Register';
 import SignIn from './pages/SignIn';
+import auth from '@react-native-firebase/auth';
 
 const App = () => {
     const [name, setName] = useState('');
@@ -125,6 +126,10 @@ const App = () => {
         setIsRegistering(false);
     };
 
+    const handleSwitchToRegister = () => {
+        setIsRegistering(true);
+    }
+
     const handleSignInSuccess = () => {
         setIsAuthenticated(true);  // Switch to user management page after successful sign-in
     };
@@ -134,6 +139,7 @@ const App = () => {
         try {
             await auth().signOut();
             Alert.alert('Success', 'Signed out successfully!');
+            setIsAuthenticated(false);
         } catch (error) {
             console.error("Error signing out: ", error);
             Alert.alert('Error', 'Failed to sign out.');
@@ -147,7 +153,7 @@ const App = () => {
                 // Show Register component if the user is registering
                 <Register onRegisterSuccess={handleRegisterSuccess} onAlreadyRegistered={handleSwitchToSignIn} />
             ) : !isAuthenticated ? (
-                <SignIn onSignInSuccess={handleSignInSuccess} />
+                <SignIn onSignInSuccess={handleSignInSuccess} notAlreadyRegistered={handleSwitchToRegister} />
             ) : (
                 <>
                     <TextInput
@@ -202,6 +208,9 @@ const App = () => {
                             )}
                         />
                     )}
+                    <View style={{ marginTop: 20 }}>
+                        <Button title="Sign Out" onPress={handleSignOut} />
+                    </View>
                 </>
             )}
         </SafeAreaView>
