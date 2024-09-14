@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView, TextInput, Button, FlatList, Text, View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import database from '@react-native-firebase/database';
+import Register from './pages/Register';
 
 const App = () => {
     const [name, setName] = useState('');
@@ -10,7 +11,7 @@ const App = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     const [selectedUserId, setSelectedUserId] = useState(null); // New state to track selected user
-
+    const [isRegistering, setIsRegistering] = useState(true);  // State to toggle between registration and user management
     // Fetch users from Firebase Realtime Database
     useEffect(() => {
         fetchUsers();
@@ -110,62 +111,73 @@ const App = () => {
         }
     };
 
+    // Function to switch back to the main user management screen after registration
+    const handleRegisterSuccess = () => {
+        setIsRegistering(false);
+    };
+
 
     return (
         <SafeAreaView style={styles.container}>
-            <TextInput
-                style={styles.input}
-                placeholder="Name"
-                value={name}
-                onChangeText={setName}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Mobile"
-                value={mobile}
-                onChangeText={setMobile}
-            />
-            {/* <Button title="Submit" onPress={handleSubmit} /> */}
-            <Button title={selectedUserId ? "Update" : "Submit"} onPress={handleSubmit} />
-
-            {isLoading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
+            {isRegistering ? (
+                // Show Register component if the user is registering
+                <Register onRegisterSuccess={handleRegisterSuccess} />
             ) : (
-                // <FlatList
-                //     data={users}
-                //     keyExtractor={item => item.id}
-                //     renderItem={({ item }) => (
-                //         <View style={styles.userItem}>
-                //             <Text style={styles.userText}>{item.username}</Text>
-                //             <Text>Email: {item.email}</Text>
-                //             <Text>Created At: {new Date(item.createdAt).toLocaleString()}</Text>
-                //         </View>
-                //     )}
-                // />
-                <FlatList
-                    data={users}
-                    keyExtractor={item => item.id}
-                    renderItem={({ item }) => (
-                        <View style={styles.userItem}>
-                            <Text style={styles.userText}>{item.username}</Text>
-                            <Text>{item.email}</Text>
-                            <Text>{item.mobile}</Text>
-                            <View style={{ paddingTop: 5 }}><Button
-                                title="Edit" onPress={() => handleEdit(item)} /></View>
-                            <View style={{ paddingTop: 5 }}>
-                                <Button title="Delete" onPress={() => handleDeleteUser(item.id)} color="red" />
-                            </View>
-                        </View>
-                    )}
-                />
-            )}
+                <>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Name"
+                        value={name}
+                        onChangeText={setName}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Email"
+                        value={email}
+                        onChangeText={setEmail}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Mobile"
+                        value={mobile}
+                        onChangeText={setMobile}
+                    />
+                    {/* <Button title="Submit" onPress={handleSubmit} /> */}
+                    <Button title={selectedUserId ? "Update" : "Submit"} onPress={handleSubmit} />
 
+                    {isLoading ? (
+                        <ActivityIndicator size="large" color="#0000ff" />
+                    ) : (
+                        // <FlatList
+                        //     data={users}
+                        //     keyExtractor={item => item.id}
+                        //     renderItem={({ item }) => (
+                        //         <View style={styles.userItem}>
+                        //             <Text style={styles.userText}>{item.username}</Text>
+                        //             <Text>Email: {item.email}</Text>
+                        //             <Text>Created At: {new Date(item.createdAt).toLocaleString()}</Text>
+                        //         </View>
+                        //     )}
+                        // />
+                        <FlatList
+                            data={users}
+                            keyExtractor={item => item.id}
+                            renderItem={({ item }) => (
+                                <View style={styles.userItem}>
+                                    <Text style={styles.userText}>{item.username}</Text>
+                                    <Text>{item.email}</Text>
+                                    <Text>{item.mobile}</Text>
+                                    <View style={{ paddingTop: 5 }}><Button
+                                        title="Edit" onPress={() => handleEdit(item)} /></View>
+                                    <View style={{ paddingTop: 5 }}>
+                                        <Button title="Delete" onPress={() => handleDeleteUser(item.id)} color="red" />
+                                    </View>
+                                </View>
+                            )}
+                        />
+                    )}
+                </>
+            )}
         </SafeAreaView>
     );
 };
