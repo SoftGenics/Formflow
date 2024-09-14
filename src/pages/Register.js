@@ -1,8 +1,13 @@
+//src/pages/Register.js
 import React, { useState } from 'react';
-import { SafeAreaView, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { SafeAreaView, TextInput, Button, Alert, StyleSheet, View, Text } from 'react-native';
 import auth from '@react-native-firebase/auth';
+//For Authentication install these dependencies
+//npm install @react-native-firebase/app @react-native-firebase/auth
+import SignIn from './SignIn';
 
-const Register = ({ onRegisterSuccess }) => {
+//User Registration Method
+const Register = ({ onRegisterSuccess, onAlreadyRegistered }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -32,7 +37,10 @@ const Register = ({ onRegisterSuccess }) => {
                 value={password}
                 onChangeText={setPassword}
             />
-            <Button title="Register" onPress={handleRegister} />
+            <Button style={styles.btn} title="Register" onPress={handleRegister} />
+            <View style={styles.btn}>
+                <Button title="Already Registered" onPress={onAlreadyRegistered} />
+            </View>
         </SafeAreaView>
     );
 };
@@ -49,6 +57,10 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         paddingHorizontal: 10,
     },
+    btn: {
+        padding: 10,
+        marginBottom: 20,
+    }
 });
 
 export default Register;

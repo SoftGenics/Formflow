@@ -1,7 +1,9 @@
+//src/App.js
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView, TextInput, Button, FlatList, Text, View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import database from '@react-native-firebase/database';
 import Register from './pages/Register';
+import SignIn from './pages/SignIn';
 
 const App = () => {
     const [name, setName] = useState('');
@@ -12,6 +14,8 @@ const App = () => {
 
     const [selectedUserId, setSelectedUserId] = useState(null); // New state to track selected user
     const [isRegistering, setIsRegistering] = useState(true);  // State to toggle between registration and user management
+    const [isAuthenticated, setIsAuthenticated] = useState(false); //Check if user is authenticated.
+
     // Fetch users from Firebase Realtime Database
     useEffect(() => {
         fetchUsers();
@@ -116,12 +120,34 @@ const App = () => {
         setIsRegistering(false);
     };
 
+    // Function to switch to sign-in page after registration or when user clicks "Already Registered"
+    const handleSwitchToSignIn = () => {
+        setIsRegistering(false);
+    };
+
+    const handleSignInSuccess = () => {
+        setIsAuthenticated(true);  // Switch to user management page after successful sign-in
+    };
+
+    // Handle sign-out
+    const handleSignOut = async () => {
+        try {
+            await auth().signOut();
+            Alert.alert('Success', 'Signed out successfully!');
+        } catch (error) {
+            console.error("Error signing out: ", error);
+            Alert.alert('Error', 'Failed to sign out.');
+        }
+    };
+
 
     return (
         <SafeAreaView style={styles.container}>
             {isRegistering ? (
                 // Show Register component if the user is registering
-                <Register onRegisterSuccess={handleRegisterSuccess} />
+                <Register onRegisterSuccess={handleRegisterSuccess} onAlreadyRegistered={handleSwitchToSignIn} />
+            ) : !isAuthenticated ? (
+                <SignIn onSignInSuccess={handleSignInSuccess} />
             ) : (
                 <>
                     <TextInput
